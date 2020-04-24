@@ -82,7 +82,7 @@ const getTickets = event => {
   const origin = city.find(item => item.name === inputCitiesFrom.value).code,
     destination = city.find(item => item.name === inputCitiesTo.value).code,
     date = inputDateDepart.value,
-    url = `${calendar}?origin=${origin}&destination=${destination}&depart_date=${date}&one_way=false&token=${API_KEY}`;
+    url = `${calendar}?origin=${origin}&destination=${destination}&depart_date=${date}&one_way=true&token=${API_KEY}`;
 
   getData(url, data => console.log(JSON.parse(data).best_prices.find(item => item.depart_date === date)));
 }
