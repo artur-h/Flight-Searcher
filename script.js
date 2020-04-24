@@ -34,10 +34,25 @@ const showCity = (input, list) => {
   list.textContent = '';
 
   if (input.value !== '') {
-    const filterCity = city.filter(item => {
+    const citiesStartsWith = [];
+    const citiesIncludes = [];
+
+    city.forEach(item => {
       const fixItem = item.name.toLowerCase();
-      return fixItem.includes(input.value.toLowerCase());
+      const inputValue = input.value.toLowerCase()
+
+      if (fixItem.startsWith(inputValue)) {
+        citiesStartsWith.push(item);
+      } else if (fixItem.includes(inputValue)) {
+        citiesIncludes.push(item);
+      }
     });
+
+    const byAlphabet = (a, b) => a.name > b.name ? 1 : -1;
+    citiesStartsWith.sort(byAlphabet);
+    citiesIncludes.sort(byAlphabet);
+
+    const filterCity = citiesStartsWith.concat(citiesIncludes);
 
     filterCity.forEach(item => {
       const li = document.createElement('li');
@@ -62,7 +77,8 @@ const renderCheapDay = cheapTicket => {
 };
 
 const renderCheapYear = cheapTickets => {
-
+  cheapTickets.sort((a, b) => a.value - b.value);
+  console.log(cheapTickets);
 };
 
 const renderCheap = (data, date) => {
