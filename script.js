@@ -3,12 +3,13 @@ const formSearch = document.querySelector('.form-search'),
   dropdownCitiesFrom = document.querySelector('.dropdown__cities-from'),
   inputCitiesTo = document.querySelector('.input__cities-to'),
   dropdownCitiesTo = document.querySelector('.dropdown__cities-to'),
-  inputDateDepart = document.querySelector('.input__date-depart');
+  inputDateDepart = document.querySelector('.input__date-depart'),
+  buttonSearch = document.querySelector('.button__search');
 
 const citiesApi = 'http://api.travelpayouts.com/data/ru/cities.json',
   proxy = 'https://cors-anywhere.herokuapp.com/',
   API_KEY = '6008b241d2bfb45db809e626a2f672e4',
-  calendar = 'http://min-prices.aviasales.ru/calendar_preload';
+  calendar = `http://min-prices.aviasales.ru/calendar_preload`;
 
 let city = [];
 
@@ -75,4 +76,15 @@ dropdownCitiesTo.addEventListener('click', event => {
 
 getData(proxy + citiesApi, data => city = JSON.parse(data).filter(item => item.name));
 
-// сделать один запрос на сервер для получения билета на 25 мая Екатеренбург - Калининград. Вывести результат в консоль.
+const getTickets = event => {
+  event.preventDefault();
+
+  const origin = city.find(item => item.name === inputCitiesFrom.value).code,
+    destination = city.find(item => item.name === inputCitiesTo.value).code,
+    date = inputDateDepart.value,
+    url = `${calendar}?origin=${origin}&destination=${destination}&depart_date=${date}&one_way=false&token=${API_KEY}`;
+
+  getData(url, data => console.log(JSON.parse(data).best_prices.find(item => item.depart_date === date)));
+}
+
+buttonSearch.addEventListener('click', getTickets);
