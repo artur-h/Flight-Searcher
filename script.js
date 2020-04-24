@@ -48,7 +48,7 @@ const showCity = (input, list) => {
   }
 };
 
-const handlerCity = (event, input, list) => {
+const selectCity = (event, input, list) => {
   const target = event.target;
 
   if (target.tagName.toLowerCase() === 'li') {
@@ -56,6 +56,22 @@ const handlerCity = (event, input, list) => {
     list.textContent = '';
   }
 }
+
+const renderCheapDay = cheapTicket => {
+
+};
+
+const renderCheapYear = cheapTickets => {
+
+};
+
+const renderCheap = (data, date) => {
+  const cheapTicketYear = JSON.parse(data).best_prices;
+  const cheapTicketDay = cheapTicketYear.filter(item => item.depart_date === date)
+
+  renderCheapDay(cheapTicketDay);
+  renderCheapYear(cheapTicketYear);
+};
 
 inputCitiesFrom.addEventListener('input', () => {
   showCity(inputCitiesFrom, dropdownCitiesFrom);
@@ -66,13 +82,30 @@ inputCitiesTo.addEventListener('input', () => {
 });
 
 dropdownCitiesFrom.addEventListener('click', event => {
-  handlerCity(event, inputCitiesFrom, dropdownCitiesFrom)
+  selectCity(event, inputCitiesFrom, dropdownCitiesFrom)
 });
 
 dropdownCitiesTo.addEventListener('click', event => {
-  handlerCity(event, inputCitiesTo, dropdownCitiesTo)
+  selectCity(event, inputCitiesTo, dropdownCitiesTo)
 });
 
-getData(proxy + citiesApi, data => city = JSON.parse(data).filter(item => item.name));
+formSearch.addEventListener('submit', event => {
+  event.preventDefault();
 
-// сделать один запрос на сервер для получения билета на 25 мая Екатеренбург - Калининград. Вывести результат в консоль.
+  const cityFrom = city.find(item => inputCitiesFrom.value === item.name);
+  const cityTo = city.find(item => inputCitiesTo.value === item.name);
+
+  const formData = {
+    from: cityFrom.code,
+    to: cityTo.code,
+    when: inputDateDepart.value
+  }
+
+  const requestData = `?depart_date=${formData.when}&origin=${formData.from}&destination=${formData.to}&one_way=true&token=${API_KEY}`;
+
+  getData(proxy + calendar + requestData, response => {
+    renderCheap(response, formData.when);
+  });
+})
+
+getData(proxy + citiesApi, data => city = JSON.parse(data).filter(item => item.name));
