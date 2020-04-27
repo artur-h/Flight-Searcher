@@ -15,6 +15,17 @@ const citiesApi = 'http://api.travelpayouts.com/data/ru/cities.json',
 
 let city = [];
 
+const errorModal = $.modal({
+  title: "Ошибка",
+  closable: true,
+  width: '400px',
+  footerButtons: [
+    {text: 'Закрыть', handler() {
+        errorModal.close();
+      }}
+  ]
+});
+
 const getData = (url, callback, reject = console.error) => {
   const request = new XMLHttpRequest();
 
@@ -201,11 +212,17 @@ formSearch.addEventListener('submit', event => {
     getData(proxy + calendar + requestData, response => {
       renderCheap(response, formData.when);
     }, error => {
-      alert('There is no tickets for this flight');
+      errorModal.setContent(`
+        <p>Билетов по маршруту ${cityFrom.name} : ${cityTo.name} нету.</p>
+      `);
+      errorModal.open();
       console.error('Error', error);
     });
   } else {
-    alert('Enter correct name of the city');
+    errorModal.setContent(`
+      <p>Введите корректные имена городов.</p>
+    `);
+    errorModal.open();
   }
 })
 
